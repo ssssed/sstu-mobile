@@ -1,5 +1,1 @@
-.env
 .idea
-dist
-node_modules
-prisma/migrations
