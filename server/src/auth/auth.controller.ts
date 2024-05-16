@@ -12,7 +12,7 @@ export class AuthController {
 
   @ApiBody({ type: AuthUserDto })
   @ApiResponse({
-    status: HttpStatus.CREATED,
+    status: HttpStatus.OK,
     description: 'Авторизация пользователя',
     type: ResponseUser,
   })

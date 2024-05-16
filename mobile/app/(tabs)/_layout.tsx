@@ -125,10 +125,6 @@ export default function TabLayout() {
   const isAuth = AuthStore.instance.isAuthenticated();
 
   useEffect(() => {
-    AuthStore.instance.checkAuthenticatedInAsyncStorage();
-  }, []);
-
-  useEffect(() => {
     if (!isAuth) {
       TABS.set(PUBLIC_TABS)
     } else {

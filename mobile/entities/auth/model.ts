@@ -39,6 +39,8 @@ export class AuthStore implements Clearable {
     const userString = await AsyncStorage.getItem(AsyncStorageKey.USER);
     const token = await AsyncStorage.getItem(AsyncStorageKey.TOKEN);
 
+    console.log("USER DATA IN ASYNC STORAGE ::", userString, token);
+
     if (userString && token) {
       this._user.set(JSON.parse(userString));
       this._token.set(token);

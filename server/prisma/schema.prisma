@@ -19,25 +19,28 @@ enum UserStatus {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  firstName String
-  lastName  String
-  avatar    String?
-  phone     String     @unique
-  password  String
-  status    UserStatus @default(Active)
-  Chat      Chat?      @relation(fields: [chatId], references: [id])
-  chatId    Int?
-  Message   Message[]
+  id            Int        @id @default(autoincrement())
+  studentNumber String     @unique
+  groupName     String     @default("б1-ПИНФ-32")
+  firstName     String
+  lastName      String
+  avatar        String?
+  phone         String     @unique
+  password      String
+  status        UserStatus @default(Active)
+  Chat          Chat?      @relation(fields: [chatId], references: [id])
+  chatId        Int?
+  Message       Message[]
 }
 
 model Message {
-  id      Int    @id @default(autoincrement())
-  content String
-  user_id Int
-  user    User   @relation(references: [id], fields: [user_id])
-  chat_id Int
-  chat    Chat   @relation(references: [id], fields: [chat_id])
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  user_id   Int
+  user      User     @relation(references: [id], fields: [user_id])
+  chat_id   Int
+  chat      Chat     @relation(references: [id], fields: [chat_id])
 }
 
 model Chat {

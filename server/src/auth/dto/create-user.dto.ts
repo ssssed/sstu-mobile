@@ -1,7 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prisma } from '@prisma/client';
+import { $Enums, Prisma } from '@prisma/client';
 
 export class CreateUserDto implements Prisma.UserCreateInput {
+  @ApiProperty({ default: '212000' })
+  studentNumber: string;
+  @ApiProperty({ default: 'б1-ПИНФ-32' })
+  groupName: string;
+  @ApiProperty({ default: null })
+  status?: $Enums.UserStatus;
   @ApiProperty({ default: null })
   avatar: string | null;
   @ApiProperty({ default: 'John' })

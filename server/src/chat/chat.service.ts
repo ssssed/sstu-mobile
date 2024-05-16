@@ -5,7 +5,8 @@ import { CreateMessageDto } from './dto/create-message.dto';
 
 @Injectable()
 export class ChatService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {
+  }
 
   async createChat(userId: number) {
     return this.prisma.chat.create({
@@ -24,6 +25,7 @@ export class ChatService {
         id: true,
         content: true,
         chat_id: true,
+        createdAt: true,
         user: {
           select: {
             id: true,
@@ -45,12 +47,15 @@ export class ChatService {
         id: true,
         content: true,
         chat_id: true,
+        createdAt: true,
         user: {
           select: {
             id: true,
             firstName: true,
             lastName: true,
             avatar: true,
+            groupName: true,
+            studentNumber: true,
           },
         },
       },
