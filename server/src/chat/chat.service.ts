@@ -32,6 +32,8 @@ export class ChatService {
             firstName: true,
             lastName: true,
             avatar: true,
+            groupName: true,
+            studentNumber: true,
           },
         },
       },
