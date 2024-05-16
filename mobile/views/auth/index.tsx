@@ -2,12 +2,27 @@ import {StyleSheet} from 'react-native';
 import {View} from '@/components/Themed';
 import {useState} from "react";
 import AuthForm from "@/views/auth/ui/auth-form";
+import {Tabs} from "@/views/auth/ui/tabs";
+import {RegisterForm} from "@/views/auth/ui/register-form";
+
+type TabNamesType = 'auth' | 'register';
 
 export default function AuthView() {
-  const [tab, setTab] = useState<'auth' | 'register'>('auth');
+  const [tab, setTab] = useState<TabNamesType>('auth');
   return (
     <View style={styles.container}>
-      {tab === 'auth' && (<AuthForm/>)}
+      <Tabs<TabNamesType> value={tab} onTabChange={setTab} contents={[
+        {
+          name: 'auth',
+          label: 'Вход',
+          component: <AuthForm/>
+        },
+        {
+          name: 'register',
+          label: 'Регистрация',
+          component: <RegisterForm/>
+        }
+      ]}/>
     </View>
   );
 }
@@ -15,8 +30,6 @@ export default function AuthView() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   title: {
     fontSize: 20,

@@ -1,23 +1,27 @@
 export type AuthStatus = 'authenticated' | 'unauthenticated';
 
 export type UserParamsType = {
-  avatar: string | null,
-  firstName: string,
-  lastName: string,
-  phone: string,
-  password: string
+  avatar: string | null;
+  studentNumber: number;
+  groupName: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  password: string;
 }
 
-export type UserSignInParamsType = Omit<UserParamsType, 'firstName' | 'lastName' | 'avatar'>
+export type UserSignInParamsType = Pick<UserParamsType, "phone" | 'password'>
 
 export type UserType = {
   id: number;
-  avatar: string | null,
-  firstName: string,
-  lastName: string,
-  phone: string,
-  password: string,
-  status: 'Active' | 'Deactivate',
+  studentNumber: number;
+  groupName: string;
+  avatar: string | null;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  password: string;
+  status: 'Active' | 'Deactivate';
 }
 
 export type UserResponseType = {

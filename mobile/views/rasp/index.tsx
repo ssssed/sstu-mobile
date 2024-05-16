@@ -3,28 +3,21 @@ import {Text, View} from '@/components/Themed';
 import React, {Fragment, useEffect, useState} from "react";
 import {RaspStore} from "@/entities/rasp";
 import {Loader} from "@/shared/ui/loader";
+import { AuthStore } from '@/entities/auth';
 
 export default function RaspView() {
-  const [selectedValue, setSelectedValue] = useState<string>('');
   const rasp = RaspStore.instance.calendar;
   const loading = RaspStore.instance.calendarLoading;
+  const user = AuthStore.instance.user;
 
   useEffect(() => {
-    RaspStore.instance.fetchCalendar('б1-ПИНФ-32');
-  }, [selectedValue]);
+    RaspStore.instance.fetchCalendar(user?.groupName!);
+  }, [user]);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Raps</Text>
+      <Text style={styles.title}>Рассписание</Text>
       <Loader loading={loading}/>
-      {/*<Picker*/}
-      {/*  selectedValue={selectedValue}*/}
-      {/*  onValueChange={handleChange}*/}
-      {/*  style={styles.picker}*/}
-      {/*>*/}
-      {/*  {groups.map(group => (*/}
-      {/*    <Picker.Item key={group.name} label={group.name} value={group.groupId}/>*/}
-      {/*  ))}*/}
-      {/*</Picker>*/}
       <ScrollView style={styles.calendar}>
         {rasp.map((day, index) => (
           <Fragment key={day.day + index}>

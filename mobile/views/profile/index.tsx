@@ -1,10 +1,16 @@
 import {StyleSheet} from 'react-native';
 import {Text, View} from '@/components/Themed';
+import {AuthStore} from "@/entities/auth";
+import {Logout} from "@/features/(auth)";
 
 export default function ProfileView() {
+  const user = AuthStore.instance.user;
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Профиль {user?.lastName} {user?.firstName}</Text>
+        <Logout/>
+      </View>
     </View>
   );
 }
@@ -12,8 +18,9 @@ export default function ProfileView() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginTop: 30,
   },
   title: {
     fontSize: 20,
@@ -24,4 +31,11 @@ const styles = StyleSheet.create({
     height: 1,
     width: '80%',
   },
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 40
+  }
 });

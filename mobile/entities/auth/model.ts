@@ -4,6 +4,7 @@ import {request} from "@/shared/lib/axios";
 import {AuthStatus, UserParamsType, UserResponseType, UserSignInParamsType, UserType} from "@/entities/auth/types";
 import {HttpStatus} from "@/shared/config/status";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {router} from "expo-router";
 
 enum AsyncStorageKey {
   USER = 'STORAGE_USER_KEY',
@@ -88,7 +89,8 @@ export class AuthStore implements Clearable {
   }
 
   async logout() {
-    await Promise.all([AsyncStorage.removeItem(AsyncStorageKey.USER), AsyncStorage.removeItem(AsyncStorageKey.TOKEN)])
+    await Promise.all([AsyncStorage.removeItem(AsyncStorageKey.USER), AsyncStorage.removeItem(AsyncStorageKey.TOKEN)]);
+    router.replace('/auth');
     this.clear();
   }
 

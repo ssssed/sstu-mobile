@@ -29,8 +29,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderWidth: 1,
     paddingHorizontal: 10,
-    borderRadius: 8,
+    borderRadius: 4,
     borderStyle: 'solid',
-    borderColor: 'black'
+    borderColor: 'lightgray'
   }
 });

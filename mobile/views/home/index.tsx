@@ -1,7 +1,14 @@
 import {StyleSheet} from 'react-native';
 import {Text, View} from '@/components/Themed';
+import {useEffect} from "react";
+import {RaspStore} from "@/entities/rasp";
 
 export default function HomeView() {
+
+  useEffect(() => {
+    RaspStore.instance.fetchGroups()
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>HomeView</Text>

@@ -5,11 +5,7 @@ import {Input} from "@/shared/ui/input";
 import {Button} from "@/shared/ui/button";
 import {AuthStore} from "@/entities/auth";
 import {router} from "expo-router";
-
-type AuthFormData = {
-  phone: string;
-  password: string;
-}
+import {UserSignInParamsType} from "@/entities/auth/types";
 
 export default function AuthForm() {
   const {
@@ -21,7 +17,7 @@ export default function AuthForm() {
     mode: 'onTouched'
   });
 
-  const handleLogin: SubmitHandler<any> = async (values: AuthFormData) => {
+  const handleLogin: SubmitHandler<any> = async (values: UserSignInParamsType) => {
     await AuthStore.instance.authenticate(values);
     reset();
     router.replace('/');
@@ -30,6 +26,7 @@ export default function AuthForm() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Вход</Text>
+      <View style={styles.inputContainer}>
       <Input name={'phone'} placeholder={'Номер телефона'} control={control} defaultValue={''} rules={{
         required: {
           message: 'Телефон это обязательное поле',
@@ -46,7 +43,9 @@ export default function AuthForm() {
           value: true,
         },
       }} secureTextEntry/>
-      <Button onPress={handleSubmit(handleLogin)} disabled={!isValid || isSubmitting}>Войти</Button>
+      </View>
+      <Button style={styles.button} onPress={handleSubmit(handleLogin)}
+              disabled={!isValid || isSubmitting}>Войти</Button>
     </View>
   );
 }
@@ -56,9 +55,8 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 20,
     width: '100%',
-    padding: 40,
+    paddingHorizontal: 40,
     alignItems: 'center',
-    justifyContent: 'center',
   },
   title: {
     fontSize: 20,
@@ -69,4 +67,14 @@ const styles = StyleSheet.create({
     height: 1,
     width: '80%',
   },
+  button: {
+    display: 'flex',
+    width: '100%'
+  },
+  inputContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 8
+  }
 });
