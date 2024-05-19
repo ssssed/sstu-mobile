@@ -39,7 +39,7 @@ export class ParserController {
   @HttpCode(HttpStatus.OK)
   @Get('groups')
   apiParseGroups() {
-    return this.parserService.parseGroups();
+    return this.parserService.apiParseGroups();
   }
 
   @HttpCode(HttpStatus.OK)

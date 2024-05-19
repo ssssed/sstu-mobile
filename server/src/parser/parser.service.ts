@@ -76,6 +76,10 @@ export class ParserService {
     return weeksJson as DayEntity[];
   }
 
+  async apiParseGroups() {
+    return this.prismaService.group.findMany();
+  }
+
   async parseGroups() {
     let data;
     try {
@@ -123,7 +127,7 @@ export class ParserService {
     return groups;
   }
 
-  private serializeNewsPageToJson(html: string): NewsDto[] {
+  private async serializeNewsPageToJson(html: string) {
     const $ = cheerio.load(html, {});
     const news = $('.news-item');
 
@@ -189,7 +193,7 @@ export class ParserService {
     const firstPage = this.serializeNewsPageToJson(data);
     this.logger.debug(`[ PAGE ${currentPage}/${lastPage} ] :: was parsed`);
 
-    response.push(...firstPage);
+    response.push(...(await firstPage));
 
     while (currentPage < +lastPage) {
       const parsingPage = await this.parseNewsPage(++currentPage);
