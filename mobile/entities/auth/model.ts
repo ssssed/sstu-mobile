@@ -4,7 +4,7 @@ import { request } from '@/shared/lib/axios';
 import { AuthStatus, UserParamsType, UserResponseType, UserSignInParamsType, UserType } from '@/entities/auth/types';
 import { HttpStatus } from '@/shared/config/status';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router } from 'expo-router';
+import { PUBLIC_TABS, TABS } from './tabs.store';
 
 enum AsyncStorageKey {
     USER = 'STORAGE_USER_KEY',
@@ -92,8 +92,7 @@ export class AuthStore implements Clearable {
             AsyncStorage.removeItem(AsyncStorageKey.USER),
             AsyncStorage.removeItem(AsyncStorageKey.TOKEN)
         ]);
-        router.replace('/auth');
-        this._status.set('unauthenticated');
+        TABS.set(PUBLIC_TABS);
         this.clear();
     }
 
