@@ -20,7 +20,7 @@ export default function HomeView() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>HomeView</Text>
+            <Text style={styles.title}>Новости</Text>
             <FlatList
                 /* @ts-ignore */
                 data={news}
