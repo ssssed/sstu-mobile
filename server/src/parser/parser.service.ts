@@ -1,10 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import cheerio from 'cheerio';
 import { GroupDto } from './dto/group.dto';
 import { Prisma } from 'prisma';
 import { PrismaService } from '../prisma/prisma.service';
 import { DayEntity } from './entities/day.entity';
+import { cleanText } from './lib/text';
+import { NewsDto } from './dto/news.dto';
 
 @Injectable()
 export class ParserService {
@@ -17,14 +19,25 @@ export class ParserService {
       where: { name: groupDto.name },
     });
 
-    const { data } = await axios.get<string>(
-      `${process.env.SSTU_RASP_URL}/${group.groupId}`,
-      {
-        headers: {
-          'User-Agent': this.generateUserAgent(),
+    let data;
+
+    try {
+      const response = await axios.get<string>(
+        `${process.env.SSTU_RASP_URL}/${group.groupId}`,
+        {
+          headers: {
+            'User-Agent': this.generateUserAgent(),
+          },
         },
-      },
-    );
+      );
+
+      data = response.data;
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        data = e.response.data;
+      }
+    }
+
     const $ = cheerio.load(data);
 
     const weeks = $('.week').toArray().slice(0, 3);
@@ -64,11 +77,21 @@ export class ParserService {
   }
 
   async parseGroups() {
-    const { data } = await axios.get<string>(process.env.SSTU_GROUPS_URL, {
-      headers: {
-        'User-Agent': this.generateUserAgent(),
-      },
-    });
+    let data;
+    try {
+      const response = await axios.get<string>(process.env.SSTU_GROUPS_URL, {
+        headers: {
+          'User-Agent': this.generateUserAgent(),
+        },
+      });
+
+      data = response.data;
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        data = e.response.data;
+      }
+    }
+
     const $ = cheerio.load(data, {});
     const regex = /\/rasp\/group\/\d+/;
     this.logger.log('Parsing groups...');
@@ -98,6 +121,96 @@ export class ParserService {
     this.logger.log('Groups updated');
 
     return groups;
+  }
+
+  private serializeNewsPageToJson(html: string): NewsDto[] {
+    const $ = cheerio.load(html, {});
+    const news = $('.news-item');
+
+    const pageNews = [];
+
+    for (const item of news) {
+      const imageEl = $(item).find('.news-item__img');
+      const img = $(imageEl).find('img').get(0);
+      const link = $(imageEl).attr('href');
+      const image = $(img).attr('src');
+
+      const tag = cleanText($(item).find('.news-item__tag').text());
+      const date = cleanText($(item).find('.news-item__date').text());
+      const titleEl = $(item).find('.news-item__title').get(0);
+      const title = cleanText($($(titleEl).find('a').get(0)).text());
+      const description = cleanText(
+        $($(item).find('.news-item__desc').get(0)).text(),
+      );
+
+      pageNews.push({
+        link,
+        image,
+        tag,
+        date,
+        title,
+        description,
+      });
+    }
+
+    return pageNews;
+  }
+
+  async parseNewsPage(page: string | number) {
+    const { data } = await axios.get<string>(process.env.SSTU_NEWS_URL, {
+      headers: {
+        'User-Agent': this.generateUserAgent(),
+      },
+      params: {
+        PAGEN_1: page,
+      },
+    });
+
+    return this.serializeNewsPageToJson(data);
+  }
+
+  async parseNews(): Promise<NewsDto[]> {
+    const { data } = await axios.get<string>(process.env.SSTU_NEWS_URL, {
+      headers: {
+        'User-Agent': this.generateUserAgent(),
+      },
+    });
+    const $ = cheerio.load(data, {});
+
+    let currentPage = 1;
+
+    const pagination = $('.pagination');
+    const link = $(pagination).find('a').get().at(-1);
+
+    const lastPage = $(link).attr('href').split('=').at(-1);
+
+    const response = [];
+
+    const firstPage = this.serializeNewsPageToJson(data);
+    this.logger.debug(`[ PAGE ${currentPage}/${lastPage} ] :: was parsed`);
+
+    response.push(...firstPage);
+
+    while (currentPage < +lastPage) {
+      const parsingPage = await this.parseNewsPage(++currentPage);
+      this.logger.debug(`[ PAGE ${currentPage}/${lastPage} ] :: was parsed`);
+      response.push(...parsingPage);
+    }
+
+    this.logger.log('Clear table...');
+    await this.prismaService.news.deleteMany();
+    this.logger.log('Table clear!');
+
+    this.logger.log('Update table...');
+    const dbData = await this.prismaService.news.createMany({
+      data: response,
+      skipDuplicates: true,
+    });
+    this.logger.log('News updated');
+
+    this.logger.log('[ dbData ] ::', dbData);
+
+    return response;
   }
 
   private generateUserAgent(): string {

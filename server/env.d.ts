@@ -4,5 +4,6 @@ namespace NodeJS {
     SECRET: string;
     SSTU_RASP_URL: string;
     SSTU_GROUPS_URL: string;
+    SSTU_NEWS_URL: string;
   }
 }

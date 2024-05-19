@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
 } from '@nestjs/common';
 import { ParserService } from './parser.service';
@@ -30,9 +31,20 @@ export class ParserController {
     return this.parserService.parseGroups();
   }
 
+  @Cron(CronExpression.EVERY_WEEK)
+  parseNews() {
+    return this.parserService.parseNews();
+  }
+
   @HttpCode(HttpStatus.OK)
   @Get('groups')
   apiParseGroups() {
     return this.parserService.parseGroups();
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('news')
+  apiParseNews() {
+    return this.parserService.parseNews();
   }
 }
